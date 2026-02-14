@@ -1,0 +1,14 @@
+{
+  "name": "discord-casino-bot",
+  "version": "1.0.0",
+  "description": "Advanced Discord Casino Bot with ProBot Integration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security"
+  }
+}
