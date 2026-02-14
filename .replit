@@ -1,0 +1,14 @@
+run = "npm start"
+language = "nodejs"
+entrypoint = "index.js"
+
+[nix]
+channel = "stable-22_11"
+
+[packager]
+language = "nodejs"
+
+[env]
+TOKEN = "your_bot_token_here"
+PROBOT_ID = "622861622947610634"
+OWNER_ID = "your_discord_id_here"
