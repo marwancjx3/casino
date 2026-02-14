@@ -14,7 +14,17 @@ const client = new Client({
     ]
 });
 
-// ===== LOAD GAMES AUTOMATIC =====
+// ===== LOAD UTILS =====
+const utils = {};
+const utilsPath = path.join(__dirname, "utils");
+
+fs.readdirSync(utilsPath).forEach(file => {
+    if (file.endsWith(".js")) {
+        utils[file.replace(".js","")] = require(`./utils/${file}`);
+    }
+});
+
+// ===== LOAD GAMES =====
 const games = new Map();
 const gamesPath = path.join(__dirname, "games");
 
@@ -28,7 +38,7 @@ fs.readdirSync(gamesPath).forEach(file => {
     console.log("🎮 Loaded game:", name);
 });
 
-// ===== MESSAGE HANDLER =====
+// ===== MESSAGE =====
 client.on("messageCreate", async (message) => {
     if (message.author.bot) return;
 
@@ -40,15 +50,11 @@ client.on("messageCreate", async (message) => {
     const game = games.get(command);
 
     try {
-        // يدعم النظامين
         if (typeof game.execute === "function") {
-            await game.execute(client, message, args, config);
+            await game.execute(client, message, args, utils, config);
         }
         else if (typeof game === "function") {
-            await game(client, message, args, config);
-        }
-        else {
-            console.log(`⚠️ ${command}.js ليس لديه function`);
+            await game(client, message, args, utils, config);
         }
     }
     catch (err) {
