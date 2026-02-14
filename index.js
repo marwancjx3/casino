@@ -1,10 +1,10 @@
-const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const config = require('./config.js');
 const keepAlive = require('./keep_alive.js');
 const fs = require('fs');
 const path = require('path');
 
-// Initialize client
+// ===== CLIENT =====
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -20,43 +20,47 @@ const client = new Client({
     ]
 });
 
-// ===== LOAD GAMES =====
-const games = {};
-const gamesPath = path.join(__dirname, 'games');
-
-if (fs.existsSync(gamesPath)) {
-    fs.readdirSync(gamesPath).forEach(file => {
-        if (file.endsWith('.js')) {
-            games[file.replace('.js', '')] = require(path.join(gamesPath, file));
-        }
-    });
-}
 
 // ===== READY =====
 client.once('ready', () => {
     console.log(`🤖 Logged in as ${client.user.tag}`);
 });
 
+
 // ===== MESSAGE HANDLER =====
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-    const args = message.content.split(" ");
-    const command = args[0].toLowerCase();
+    const args = message.content.trim().split(/ +/);
+    const command = args.shift()?.toLowerCase();
+    if (!command) return;
 
-    // help
-    if (command === "help" || command === "مساعدة") {
-        return message.reply("🎰 الكازينو يعمل!");
-    }
+    // مسار ملف اللعبة
+    const gamePath = path.join(__dirname, 'games', `${command}.js`);
 
-    // تجربة لعبة العملة
-    if (command === "coin" || command === "عملة") {
-        return message.reply("🪙 نظام الألعاب سيتم تفعيله الآن...");
+    // اذا الامر غير موجود
+    if (!fs.existsSync(gamePath)) return;
+
+    try {
+        delete require.cache[require.resolve(gamePath)];
+        const game = require(gamePath);
+
+        // يشغل execute داخل الملف
+        if (typeof game.execute === "function") {
+            await game.execute(client, message, args, config);
+        } else {
+            console.log(`⚠️ ${command}.js لا يحتوي execute`);
+        }
+
+    } catch (err) {
+        console.error("GAME ERROR:", err);
+        message.reply("❌ حدث خطأ أثناء تشغيل اللعبة");
     }
 });
 
-// keep alive
+
+// ===== KEEP ALIVE =====
 keepAlive();
 
-// login
+// ===== LOGIN =====
 client.login(process.env.TOKEN);
