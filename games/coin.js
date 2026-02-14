@@ -126,4 +126,10 @@ module.exports.handlePayment = async (client, message, paymentData) => {
                 inline: true
             }
         )
-        .setFooter({ text: isArabic ? 'كازينو | حظ سعيد' : '
+        .setFooter({ text: isArabic ? 'كازينو | حظ سعيد' : 'Casino | Good Luck' });
+    
+    await message.channel.send({ embeds: [embed] });
+    
+    // Remove from active games
+    activeGames.delete(message.author.id);
+};
