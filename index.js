@@ -1,18 +1,20 @@
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
-const config = require('./config.js');
-const keepAlive = require('./keep_alive.js');
-const fs = require('fs');
-const path = require('path');
+const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require('discord.js');
 
-// Initialize client
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMembers
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.DirectMessages
+    ],
+    partials: [
+        Partials.Channel,
+        Partials.Message,
+        Partials.User
     ]
 });
+
 
 // Load utilities
 const utils = {};
