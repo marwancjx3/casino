@@ -61,7 +61,7 @@ module.exports = {
         russian: "روليت روسي",
         
         // Messages
-        minBet: `الحد الأدنى للرهان ${minBet} نقطة`,
+        minBet: `الحد الأدنى للرهان 10000 نقطة`,
         insufficientBank: "رصيد الكازينو غير كافٍ",
         paymentRequest: "يرجى تحويل النقاط للعب",
         waitingPayment: "في انتظار التحويل...",
